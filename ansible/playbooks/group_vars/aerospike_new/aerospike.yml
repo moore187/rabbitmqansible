@@ -1,0 +1,27 @@
+--- # General Variables file for Aerospike, any sensitive variables should be kept in the encrpted ansible-vault file.
+
+#Firewalld Zone and ports that need to be opened, internal zone
+#
+firewalld_zone: public
+firewalld_ports: 
+  - 3000/tcp
+  - 3001/tcp
+  - 3002/tcp
+  - 3003/tcp
+  - 8081/tcp
+
+
+#Aerospike Specific variables
+#
+aerospike_version : 3.15.1.4
+amc_version: 4.0.15
+
+#List of packages needed to be installed for Rabbitmq
+#
+dependent_packages:
+  - wget
+  - gcc
+  - unzip
+  - python
+  - python-devel
+  - ntp

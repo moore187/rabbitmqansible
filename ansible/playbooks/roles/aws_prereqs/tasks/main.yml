@@ -1,0 +1,27 @@
+--- 
+
+# This is a role for updating the machine to latest, installing dependent packages and adding a standard betting SSH user.
+#
+#
+
+  - name: Update all installed packages
+    yum: name=* state=latest
+
+  - name: Install dependencies
+    yum: name={{ item }} state=present
+    with_items:
+      - "{{ dependent_packages }}"
+      
+  - name: Download erlang
+    get_url: url=https://bintray.com/rabbitmq-erlang/rpm/download_file?file_path=erlang%2F20%2Fel%2F6%2Fx86_64%2Ferlang-20.3.8.15-1.el6.x86_64.rpm dest=/tmp/erlang.rpm
+    
+  - name: Install Erlang from downloaded rpm file
+    shell: yum localinstall /tmp/erlang.rpm -y
+
+  - name: Add a standard appliocation user so that the application team can administer the server
+    user:
+      name: application
+      state: present
+      groups: wheel
+      password: '$6$HictnMSR$F4kvG.qLLZxGpCORCPhsOJ0cEvLqQxRio2TCum.h2rz1AyYrhu5I4kRWlnWSYuLqDtAuAZgWIJLT773ubvgf//'
+

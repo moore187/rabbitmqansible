@@ -1,0 +1,74 @@
+--- 
+
+# This is a test role for practicing installing firewalld and
+# opening up all relevant ports need for a specific service.
+#
+#
+#
+  - name: Download the RabbitMQ server RPM
+    get_url:
+      url: "{{ rabbitmq_download_url }}"
+      dest: /tmp/rabbitmqserver.rpm
+      force: yes
+
+  - name: install the latest RabbitMQ
+    yum:
+      name: /tmp/rabbitmqserver.rpm
+      state: latest
+    notify: Restart Rabbit
+    ignore_errors: yes
+
+  - name: Start and enable the RabbitMQ-Server
+    service: name=rabbitmq-server state=started enabled=true
+
+  - name: Enable the RabbitMQ management plugin
+    rabbitmq_plugin:
+      names: rabbitmq_management
+      state: enabled
+    notify: Restart Rabbit
+
+  - name: Create 2 Virtual hosts on RabbitMQ
+    rabbitmq_vhost: name="{{ item }}" state=present
+    with_items:
+      - "{{ rabbitmq_vhosts }}"
+
+  - name: Add a rabbitmq app user to configure access to created VirtualHosts
+    rabbitmq_user:
+      user: "{{ rabbitmq_appuser }}"
+      password: "{{ rabbitmq_apppass}}"
+      vhost: "{{ item }}"
+      configure_priv: .*
+      read_priv: .*
+      write_priv: .*
+      tags: monitoring
+      state: present
+    with_items:
+      - "{{ rabbitmq_vhosts }}"
+
+  - name: Add an administrator user to all vhosts
+    rabbitmq_user:
+      user: "{{ rabbitmq_adminuser}}"
+      password: "{{ rabbitmq_adminpass }}"
+      vhost: "{{ item }}"
+      configure_priv: .*
+      read_priv: .*
+      write_priv: .*
+      tags: administrator
+      state: present
+    with_items: 
+      - "{{ rabbitmq_vhosts }}"
+      - "/"
+
+  - name: Add a readonly monitoring user to all vhosts
+    rabbitmq_user:
+      user: "{{ rabbitmq_monitoringuser }}"
+      password: "{{ rabbitmq_monitoringpass }}"
+      vhost: /
+      configure_priv: .*
+      read_priv: .*
+      write_priv: .*
+      tags: monitoring
+      state: present
+
+
+
