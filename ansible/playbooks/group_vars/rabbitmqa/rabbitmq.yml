@@ -1,0 +1,30 @@
+--- # General Variables file for RabbitMQ, sensitive data should be kept in an encrypted file. 
+
+#Firewalld Zone and ports that need to be opened, public zone because they need to be opened outside of the network.
+#
+firewalld_zone: public
+firewalld_ports: 
+  - 5672/tcp
+  - 15672/tcp
+
+
+#define the administrator and the monitoring user below
+#
+rabbitmq_adminuser: administrator
+rabbitmq_monitoringuser: checkmk
+rabbitmq_appuser: application
+
+#Specify the download url for the latest rabbitmq rpm file.
+#
+rabbitmq_download_url: https://dl.bintray.com/rabbitmq/rabbitmq-server-rpm/rabbitmq-server-3.6.14-1.el7.noarch.rpm
+
+#List of packages needed to be installed for Rabbitmq
+#
+dependent_packages:
+  - wget
+  - gcc
+  - unzip
+  - socat
+  
+rabbitmq_vhosts:
+  - ecs-digital1

@@ -18,10 +18,9 @@
   - name: Install Erlang from downloaded rpm file
     shell: yum localinstall /tmp/erlang.rpm -y
 
-  - name: Add a standard appliocation user so that the application team can administer the server
+  - name: Add a standard application user so that the application team can administer the server
     user:
       name: application
       state: present
       groups: wheel
       password: '$6$HictnMSR$F4kvG.qLLZxGpCORCPhsOJ0cEvLqQxRio2TCum.h2rz1AyYrhu5I4kRWlnWSYuLqDtAuAZgWIJLT773ubvgf//'
-

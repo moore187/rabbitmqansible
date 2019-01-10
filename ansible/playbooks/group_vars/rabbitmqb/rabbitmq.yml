@@ -27,5 +27,4 @@ dependent_packages:
   - socat
   
 rabbitmq_vhosts:
-  - ecs-digital1
   - ecs-digital2

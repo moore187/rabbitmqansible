@@ -17,7 +17,7 @@
           - boto3
           - botocore
 
-    - name: Provision the base image 
+    - name: Provision the rabbitmq hosts for group A
       ec2:
          key_name: ecsWorkKeyPair
          aws_access_key: "{{ec2_access_key}}"
@@ -27,20 +27,43 @@
          instance_type: t2.micro
          image: ami-0274e11dced17bb5b
          wait: true
-         exact_count: 1
+         exact_count: 3
          count_tag:
-            Name: rabbitmq
+            Name: rabbitmqa
          instance_tags:
-            Name: rabbitmq
-      register: ec2
+            Name: rabbitmqa
+      register: ec2rmqa
 
     - name: Add all instance public IPs to host group
-      add_host: hostname={{ item.public_ip }} groups=rabbitmq
-      loop: "{{ ec2.instances }}"
+      add_host: hostname={{ item.public_ip }} groups=rabbitmqa
+      loop: "{{ ec2rmqa.instances }}"
+
+    - pause: seconds=20
+    
+    - name: Provision the rabbitmq hosts for group B
+      ec2:
+         key_name: ecsWorkKeyPair
+         aws_access_key: "{{ec2_access_key}}"
+         aws_secret_key: "{{ec2_secret_key}}"
+         group: ansible-test
+         region: eu-west-2
+         instance_type: t2.micro
+         image: ami-0274e11dced17bb5b
+         wait: true
+         exact_count: 3
+         count_tag:
+            Name: rabbitmqb
+         instance_tags:
+            Name: rabbitmqb
+      register: ec2rmqb
+
+    - name: Add all instance public IPs to host group
+      add_host: hostname={{ item.public_ip }} groups=rabbitmqb
+      loop: "{{ ec2rmqb.instances }}"
 
     - pause: seconds=20
 
-- hosts: rabbitmq
+- hosts: rabbitmqa:rabbitmqb
   name: configure instances
   connection: ssh
   remote_user: ec2-user
