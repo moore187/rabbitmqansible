@@ -74,6 +74,5 @@
   
   roles:
     - aws_prereqs
-    - aws_firewalld
     - aws_rabbitmq
 
