@@ -75,4 +75,3 @@
   roles:
     - aws_prereqs
     - aws_rabbitmq
-
